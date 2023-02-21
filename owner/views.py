@@ -36,4 +36,5 @@ def list_owner(request):
             'vigente': True
         }
     ]
+
     return render(request, 'owner/owner_list.html', context={'data': data_context})

@@ -1,10 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Lista de Owners</title>
-</head>
-<body>
+{% extends "owner/base_generic.html" %}
+
+{% block content %}
     <h2>Bienvenidos a mi primera aplicación</h2>
 {#    <p><strong>Nombre de Owner: </strong>{{ data.nombre }}</p>#}
 
@@ -47,7 +43,7 @@
         {% endfor %}
     </ul>{% endcomment %}
 
-    <ul>
+    {% comment %}<ul>
         {% for owner in data reversed %}
             <li>
                 <p><strong>Nombre de Owner: </strong>{{ owner.nombre }}</p>
@@ -55,8 +51,15 @@
                 <p><strong>País: </strong> {{ owner.pais_nacimiento }}</p>
             </li>
         {% endfor %}
-    </ul>
+    </ul>{% endcomment %}
 
+    <div>
+        {% for owner in data %}
+            {% if owner.edad and owner.dni %}
+                <p><strong>Edad de Owner: </strong>{{ owner.edad }}</p>
+                <p>El dato de edad del Owner {{ owner.nombre }}, es correcta</p>
+            {% endif %}
+        {% endfor %}
+    </div>
 
-</body>
-</html>
+{% endblock %}

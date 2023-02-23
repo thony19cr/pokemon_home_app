@@ -53,11 +53,32 @@
         {% endfor %}
     </ul>{% endcomment %}
 
+{% comment %}    <div>
+        {% for owner in data %}
+            {% if owner.edad and owner.dni %}
+                <p><strong>Edad de Owner: </strong>{{ owner.edad }}</p>
+                <p>El dato de edad del Owner {{ owner.nombre | cut:" " }}, es correcta</p>
+                {% if owner.pokemons %}
+                    {% for pokemon in owner.pokemons %}
+                        {{ pokemon.nombre_pokemon }},
+                        tiene los siguientes ataques, que son {{ pokemon.ataques | length }}:
+                        {% for ataque in pokemon.ataques %}
+                            {{ ataque }},
+                        {% endfor %}
+                    {% endfor %}
+                {% else %}
+                    <p>No se encontraron registro de pokemons para este Owner</p>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+    </div>{% endcomment %}
+
     <div>
         {% for owner in data %}
             {% if owner.edad and owner.dni %}
                 <p><strong>Edad de Owner: </strong>{{ owner.edad }}</p>
-                <p>El dato de edad del Owner {{ owner.nombre }}, es correcta</p>
+                <p>El dato de edad del Owner {{ owner.nombre | cut:" " }}, es correcta</p>
+
             {% endif %}
         {% endfor %}
     </div>

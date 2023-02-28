@@ -3,6 +3,8 @@ from django.http import HttpResponse
 # Create your views here.
 from owner.models import Owner
 
+from django.db.models import F, Q
+
 
 def list_owner(request):
 
@@ -87,7 +89,29 @@ def list_owner(request):
     owners = Owner.objects.all()[0:5]
 
     """Eliminando un conjunto de datos es específico"""
-    owners = Owner.objects.filter(id=3)
-    owners.delete()
+    #owners = Owner.objects.filter(id=3)
+    #owners.delete()
+
+    """Actualización de datos en la BD a un cierto grupo de datos o un solo registro"""
+    #Owner.objects.filter(nombre__startswith="Sam").update(pais="Colombia")
+
+
+    """Utilizando F expressions"""
+    #Owner.objects.filter(edad__lte=27).update(edad=F('edad') + 10)
+
+    """Consultas complejas"""
+    #query = Q(pais__startswith='Pe') | Q(pais__startswith='Col')
+    #owners = Owner.objects.filter(query)
+
+    """Negar Q"""
+    #query = Q(pais__startswith='Pe') & ~Q(edad=23)
+    #owners = Owner.objects.filter(query, edad=17)
+
+    query = Q(pais__startswith='Pe') | Q(pais__startswith='Col')
+    owners = Owner.objects.filter(query, edad=17)
+
+    """Error de consulta con Q, no es válido"""
+    #query = Q(pais__startswith='Pe') | Q(pais__startswith='Col')
+    #owners = Owner.objects.filter(edad=17, query)
 
     return render(request, 'owner/owner_list.html', context={'data': owners})

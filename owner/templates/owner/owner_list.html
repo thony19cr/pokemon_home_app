@@ -78,7 +78,7 @@
             {% if owner.edad and owner.dni %}
                 <p><strong>Edad de Owner: </strong>{{ owner.edad }}</p>
                 <p>El dato de edad del Owner {{ owner.nombre | cut:" " }}, es correcta</p>
-
+                <p><strong>País:</strong> {{ owner.pais}}</p>
             {% endif %}
         {% endfor %}
     </div>

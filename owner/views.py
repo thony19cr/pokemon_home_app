@@ -115,3 +115,21 @@ def list_owner(request):
     #owners = Owner.objects.filter(edad=17, query)
 
     return render(request, 'owner/owner_list.html', context={'data': owners})
+
+
+def owner_search(request):
+    query = request.GET.get('q', '')
+
+    print("Query: {}".format(query))
+    #owners = Owner.objects.all
+
+    results = (
+        Q(nombre__icontains=query)
+    )
+
+    if query:
+        data_context = Owner.objects.filter(Q(nombre__icontains=query)).distinct()
+    else:
+        data_context = ''
+
+    return render(request, 'owner/owner_search.html', context={'data': data_context, 'query': query})

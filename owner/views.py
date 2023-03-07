@@ -1,11 +1,14 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 # Create your views here.
+from django.urls import reverse_lazy
+
 from owner.forms import OwnerForm
 from owner.models import Owner
 
 from django.db.models import F, Q
 
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 
 def list_owner(request):
 
@@ -156,3 +159,53 @@ def owner_create(request):
         form = OwnerForm()
 
     return render(request, 'owner/owner-create.html', {'form': form})
+
+
+def owner_delete(request, id_owner):
+    print("ID: {}".format(id_owner))
+    owner = Owner.objects.get(id=id_owner)
+    owner.delete()
+
+    return redirect('owner_list')
+
+
+def owner_edit(request, id_owner):
+    owner = Owner.objects.get(id=id_owner)
+    form = OwnerForm(initial={'nombre': owner.nombre, 'edad': owner.edad, 'pais': owner.pais, 'dni': owner.dni})
+
+    if request.method == 'POST':
+        form = OwnerForm(request.POST, instance=owner)
+        if form.is_valid():
+            form.save()
+            return redirect('owner_detail')
+
+    return render(request, 'owner/owner_update.html', context={'form': form})
+
+
+"""Vistas basadas en clases"""
+"""ListView"""
+
+
+class OwnerList(ListView):
+    model = Owner
+    template_name = 'owner/owner_list_vc.html'
+
+
+class OwnerCreate(CreateView):
+    model = Owner
+    form_class = OwnerForm
+    template_name = 'owner/owner-create.html'
+    success_url = reverse_lazy('owner_list_vc')
+
+
+class OwnerUpdate(UpdateView):
+    model = Owner
+    form_class = OwnerForm
+    template_name = 'owner/owner_update_vc.html'
+    success_url = reverse_lazy('owner_list_vc')
+
+
+class OwnerDelete(DeleteView):
+    model = Owner
+    success_url = reverse_lazy('owner_list_vc')
+    template_name = 'owner/owner_confirm_delete.html'

@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 # Create your views here.
+from owner.forms import OwnerForm
 from owner.models import Owner
 
 from django.db.models import F, Q
@@ -128,8 +129,30 @@ def owner_search(request):
     )
 
     if query:
-        data_context = Owner.objects.filter(Q(nombre__icontains=query)).distinct()
+        data_context = Owner.objects.filter(results).distinct()
     else:
         data_context = ''
 
     return render(request, 'owner/owner_search.html', context={'data': data_context, 'query': query})
+
+
+def owner_details(request):
+    """Obtiene todos los elementos de una tabla de la BD"""
+    owners = Owner.objects.all()
+
+    return render(request, 'owner/owners_details.html', context={'data': owners})
+
+
+def owner_create(request):
+    form = OwnerForm(request.POST)
+
+    if form.is_valid():
+        nombre = form.cleaned_data['nombre']
+        edad = form.cleaned_data['edad']
+        pais = form.cleaned_data['pais']
+
+        form.save()
+    else:
+        form = OwnerForm()
+
+    return render(request, 'owner/owner-create.html', {'form': form})

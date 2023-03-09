@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'owner.apps.OwnerConfig',
-    'pokemon.apps.PokemonConfig'
+    'pokemon.apps.PokemonConfig',
+    'rest_framework'
 ]
 
 MIDDLEWARE = [

@@ -2,6 +2,9 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 # Create your views here.
 from django.urls import reverse_lazy
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 from owner.forms import OwnerForm
 from owner.models import Owner
@@ -9,6 +12,11 @@ from owner.models import Owner
 from django.db.models import F, Q
 
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+
+from django.core import serializers as ssr
+
+from owner.serializers import OwnerSerializer
+
 
 def list_owner(request):
 
@@ -209,3 +217,51 @@ class OwnerDelete(DeleteView):
     model = Owner
     success_url = reverse_lazy('owner_list_vc')
     template_name = 'owner/owner_confirm_delete.html'
+
+
+"""Serializers"""
+
+
+def ListOwnerSerializer(request):
+    lista_owner = ssr.serialize('json', Owner.objects.all(), fields=['nombre', 'pais', 'edad', 'dni'])
+
+    return HttpResponse(lista_owner, content_type="application/json")
+
+
+@api_view(['GET', 'POST'])
+def owner_api_view(request):
+
+    if request.method == 'GET':
+        print("Ingresó a GET!!!")
+        queryset = Owner.objects.all() # Se obtiene todos los datos de la tabla Owner
+        serializers_class = OwnerSerializer(queryset, many=True)
+
+        return Response(serializers_class.data, status=status.HTTP_200_OK)
+    elif request.method == 'POST':
+        serializers_class = OwnerSerializer(data=request.data)
+        if serializers_class.is_valid():
+            serializers_class.save()
+            return Response(serializers_class.data, status=status.HTTP_201_CREATED)
+        return Response(serializers_class.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET', 'PUT', 'DELETE'])
+def owner_detail_view(request, pk):
+    owner = Owner.objects.filter(id=pk).first()
+
+    if owner:
+        if request.method == 'GET':
+            serializers_class = OwnerSerializer(owner)
+            return Response(serializers_class.data)
+
+        elif request.method == 'PUT':
+            serializers_class = OwnerSerializer(owner, data=request.data)
+
+            if serializers_class.is_valid():
+                serializers_class.save()
+                return Response(serializers_class.data)
+            return Response(serializers_class.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        elif request.method == 'DELETE':
+            owner.delete()
+            return Response('Owner se ha eliminado correctamente de la BD', status=status.HTTP_200_OK)

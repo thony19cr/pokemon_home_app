@@ -14,4 +14,11 @@ urlpatterns = [
     path("owner_list_vc/", views.OwnerList.as_view(), name="owner_list_vc"),
     path("owner_edit_vc/<int:pk>", views.OwnerUpdate.as_view(), name="owner_edit_vc"),
     path("owner_delete_vc/<int:pk>", views.OwnerDelete.as_view(), name="owner_delete_vc"),
+
+    # URLs serializers
+    path('owner_list_serializer/', views.ListOwnerSerializer, name='owner_list_srr'),
+
+    # URLs Django Restframework
+    path('owner_list_drf_def', views.owner_api_view, name='owner_list_drf_def'),
+    path('owner_detail_drf_def/<int:pk>', views.owner_detail_view, name='owner_detail_drf_def')
 ]
